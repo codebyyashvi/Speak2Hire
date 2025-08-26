@@ -6,6 +6,7 @@ function Upload() {
   const [playbackRate, setPlaybackRate] = useState(1.0)
   const [file, setFile] = useState(null)
   const [text, setText] = useState('')
+  const [voiceId, setVoiceId] = useState('en-US-terrell')
   const [loading, setLoading] = useState(false)
   const audioRef = useRef(null)
 
@@ -28,6 +29,7 @@ function Upload() {
     const formData = new FormData()
     if (file) formData.append('file', file)
     if (text) formData.append('text', text)
+    formData.append('voice_id', voiceId)
 
     setLoading(true)
     try {
@@ -81,12 +83,20 @@ function Upload() {
         {/* File Upload */}
         <div className="w-full">
           <label className="block mb-2 font-medium">Upload File (.pdf, .doc, .docx)</label>
-          <input
-            type="file"
-            accept=".pdf,.doc,.docx"
-            onChange={handleFileChange}
-            className="w-full p-2 rounded text-white"
-          />
+          <label className="cursor-pointer bg-white text-black px-4 py-2 rounded-lg shadow hover:bg-gray-200 inline-block">
+            Choose File
+            <input
+              type="file"
+              accept=".pdf,.doc,.docx"
+              onChange={handleFileChange}
+              className="hidden"
+            />
+          </label>
+          {file && (
+            <p className="mt-2 text-sm text-gray-300">
+              Selected file: <span className="font-medium">{file.name}</span>
+            </p>
+          )}
         </div>
 
         {/* Text Input */}
@@ -99,6 +109,25 @@ function Upload() {
             placeholder="Type your text here..."
             className="w-full p-2 rounded text-black"
           />
+        </div>
+
+        {/* Language / Voice Selection */}
+        <div className="w-full">
+          <label className="block mb-2 font-medium">Choose Voice / Language</label>
+          <select
+            value={voiceId}
+            onChange={(e) => setVoiceId(e.target.value)}
+            className="w-full p-2 rounded text-black"
+          >
+            <option value="en-US-ariana">English(US)(Female)</option>
+            <option value="en-US-terrell">English(US)(Male)</option>
+            <option value="hi-IN-shweta">Hindi(Female)</option>
+            <option value="hi-IN-rahul">Hindi(Male)</option>
+            <option value="fr-FR-louis">French(Female)</option>
+            <option value="fr-FR-maxime">French(Male)</option>
+            <option value="es-ES-elvira">Spanish(Female)</option>
+            <option value="bn-IN-abhik">Bengali(Male)</option>
+          </select>
         </div>
 
         {/* Generate Voice Button */}
