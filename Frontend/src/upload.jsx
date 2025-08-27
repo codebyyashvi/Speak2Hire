@@ -33,7 +33,7 @@ function Upload() {
 
     setLoading(true)
     try {
-      const response = await fetch('https://backend-nvfg.onrender.com/generate-voice', {
+      const response = await fetch('http://127.0.0.1:5000/generate-voice', {
         method: 'POST',
         body: formData,
       })
@@ -83,20 +83,12 @@ function Upload() {
         {/* File Upload */}
         <div className="w-full">
           <label className="block mb-2 font-medium">Upload File (.pdf, .doc, .docx)</label>
-          <label className="cursor-pointer bg-white text-black px-4 py-2 rounded-lg shadow hover:bg-gray-200 inline-block">
-            Choose File
-            <input
-              type="file"
-              accept=".pdf,.doc,.docx"
-              onChange={handleFileChange}
-              className="hidden"
-            />
-          </label>
-          {file && (
-            <p className="mt-2 text-sm text-gray-300">
-              Selected file: <span className="font-medium">{file.name}</span>
-            </p>
-          )}
+          <input
+            type="file"
+            accept=".pdf,.doc,.docx"
+            onChange={handleFileChange}
+            className="w-full p-2 rounded text-white"
+          />
         </div>
 
         {/* Text Input */}
@@ -119,14 +111,13 @@ function Upload() {
             onChange={(e) => setVoiceId(e.target.value)}
             className="w-full p-2 rounded text-black"
           >
-            <option value="en-US-ariana">English(US)(Female)</option>
-            <option value="en-US-terrell">English(US)(Male)</option>
-            <option value="hi-IN-shweta">Hindi(Female)</option>
-            <option value="hi-IN-rahul">Hindi(Male)</option>
-            <option value="fr-FR-louis">French(Female)</option>
+            <option value="en-US-terrell">English (US)(Male)</option>
+            <option value="en-US-ariana">English (US)(Female)</option>
+            <option value="hi-IN-kabir">Hindi(Male)</option>
+            <option value="hi-IN-ayushi">Hindi(Female)</option>
             <option value="fr-FR-maxime">French(Male)</option>
-            <option value="es-ES-elvira">Spanish(Female)</option>
-            <option value="bn-IN-abhik">Bengali(Male)</option>
+            <option value="fr-FR-justine">French(Female)</option>
+            <option value="es-ES-enrique">Spanish(Male)</option>
           </select>
         </div>
 

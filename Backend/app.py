@@ -30,9 +30,6 @@ def extract_text_from_pdf(file_path):
     return text
 
 def chunk_text(text, max_length=500):
-    """
-    Split text into chunks of max_length characters
-    """
     chunks = []
     start = 0
     while start < len(text):
@@ -42,20 +39,11 @@ def chunk_text(text, max_length=500):
     return chunks
 
 def merge_mp3_files_ffmpeg(input_files, output_file):
-    """
-    Merge MP3 audio files using ffmpeg concat filter (safe for encoded MP3s).
-    """
-    # Load each audio file as input
     input_streams = [ffmpeg.input(f) for f in input_files]
-
-    # Apply ffmpeg audio stream concat filter
     merged = ffmpeg.concat(*input_streams, v=0, a=1)
-
-    # Output to the final mp3 file
     merged.output(output_file).run(overwrite_output=True)
 
-
-def generate_voice_from_text(text: str) -> str:
+def generate_voice_from_text(text: str, voice_id: str) -> str:
     chunks = chunk_text(text, 500)
     chunk_paths = []
 
@@ -64,7 +52,7 @@ def generate_voice_from_text(text: str) -> str:
 
         res = client.text_to_speech.generate(
             text=chunk,
-            voice_id="en-US-terrell"
+            voice_id=voice_id
         )
 
         audio_url = res.audio_file
@@ -82,7 +70,7 @@ def generate_voice_from_text(text: str) -> str:
     output_path = os.path.join(UPLOAD_FOLDER, "output.mp3")
     merge_mp3_files_ffmpeg(chunk_paths, output_path)
 
-    # Optional cleanup of chunk files
+    # Clean up temporary chunks
     for path in chunk_paths:
         os.remove(path)
 
@@ -92,14 +80,18 @@ def generate_voice_from_text(text: str) -> str:
 def generate_voice():
     text = request.form.get("text")
     file = request.files.get("file")
+    voice_id = request.form.get("voice_id", "en-US-terrell")  # Default voice
+
+    if not voice_id:
+        return jsonify({"error": "Voice ID is required"}), 400
 
     if text:
-        audio_path = generate_voice_from_text(text)
+        audio_path = generate_voice_from_text(text, voice_id)
     elif file:
         file_path = os.path.join(UPLOAD_FOLDER, file.filename)
         file.save(file_path)
         text = extract_text_from_pdf(file_path)
-        audio_path = generate_voice_from_text(text)
+        audio_path = generate_voice_from_text(text, voice_id)
     else:
         return jsonify({"error": "No text or file provided"}), 400
 
