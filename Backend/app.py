@@ -80,7 +80,7 @@ def generate_voice_from_text(text: str, voice_id: str) -> str:
 def generate_voice():
     text = request.form.get("text")
     file = request.files.get("file")
-    voice_id = request.form.get("voice_id", "en-US-terrell")  # Default voice
+    voice_id = request.form.get("voice_id", "en-US-terrell") 
 
     if not voice_id:
         return jsonify({"error": "Voice ID is required"}), 400
@@ -98,5 +98,5 @@ def generate_voice():
     return send_file(audio_path, as_attachment=True)
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # Default to 5000 if PORT not set
+    port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
